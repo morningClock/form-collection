@@ -1,0 +1,19 @@
+{
+  "name": "form-collection",
+  "version": "1.0.0",
+  "description": "![业务流程](README.assets/业务流程.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morningClock/form-collection.git"
+  },
+  "author": "morningClock",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/morningClock/form-collection/issues"
+  },
+  "homepage": "https://github.com/morningClock/form-collection#readme"
+}

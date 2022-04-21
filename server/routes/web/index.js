@@ -1,4 +1,7 @@
 const express = require('express')
+const { addCustomer, uploadFile } = require('../../controllers/form')
+const upload = require('../../middleware/upload')
+
 
 const router = express.Router({
   // 合并接口到一个整合的接口文件中
@@ -6,10 +9,9 @@ const router = express.Router({
 })
 
 module.exports = app => {
-
-  router.get('/', async (req, res) => {
-  })
+  router.post('/customer/add', addCustomer);
+  router.post('/customer/upload', upload.single('file'), uploadFile)
 
   // 挂载路由
-  app.use('web/api', router);
+  app.use('/web', router);
 }
