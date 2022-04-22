@@ -1,5 +1,5 @@
 import storage from 'store'
-import { login, getInfo, logout } from '@/api/auth/login'
+import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 const user = {
@@ -33,7 +33,7 @@ const user = {
 
   actions: {
     // 登录
-    Login ({ commit }, userInfo) {
+    Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           console.log('res:', response)
@@ -48,27 +48,30 @@ const user = {
     },
 
     // 获取用户信息
-    GetInfo ({ commit }) {
+    GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
+        getInfo().then(res => {
+          const response = res.data
           if (response.role && response.role.permissions.length > 0) {
             const role = response.role
-            role.permissions = response.role.permissions
-            role.permissions.map(per => {
-              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                const action = per.actionEntitySet.map(action => { return action.action })
-                per.actionList = action
-              }
-            })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+            // role.permissions = response.role.permissions
+            // role.permissions.map(per => {
+            //   if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
+            //     const action = per.actionEntitySet.map(action => { return action.action })
+            //     per.actionList = action
+            //   }
+            // })
+            // role.permissionList = role.permissions.map(permission => { return permission.permissionId })
+            role.permissionList = role.permissions
             commit('SET_ROLES', response.role)
             commit('SET_INFO', response)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: response.name, welcome: '' })
-          commit('SET_AVATAR', response.avatar)
+          commit('SET_INFO', response)
+          commit('SET_NAME', { name: response.username, welcome: '' })
+          // commit('SET_AVATAR', response.avatar)
 
           resolve(response)
         }).catch(error => {
@@ -78,17 +81,11 @@ const user = {
     },
 
     // 登出
-    Logout ({ commit, state }) {
+    Logout({ commit, state }) {
       return new Promise((resolve) => {
-        logout(state.token).then(() => {
-          resolve()
-        }).catch(() => {
-          resolve()
-        }).finally(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          storage.remove(ACCESS_TOKEN)
-        })
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        storage.remove(ACCESS_TOKEN)
       })
     },
 

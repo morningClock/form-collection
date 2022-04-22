@@ -85,6 +85,27 @@ async function getInfo(req, res, next) {
   if (user.password) {
     delete user.password;
   }
+  // 登录权限路由
+  // user.role = {
+  //   id: 'admin',
+  //   name: '管理员',
+  //   permissions: [
+  //     {
+  //       permissionId: 'dashboard'
+  //     },
+  //     {
+  //       permissionId: 'table'
+  //     },
+  //   ]
+  // }
+  user.role = {
+    id: 'admin',
+    name: '管理员',
+    permissions: [
+      'dashboard',
+      'table'
+    ]
+  }
   res.send({
     code: 0,
     message: '请求成功',

@@ -101,3 +101,73 @@ export {
 export {
   default as CheckCircleOutline,
 } from '@ant-design/icons/lib/outline/CheckCircleOutline'
+
+export {
+  default as TableOutline,
+} from '@ant-design/icons/lib/outline/TableOutline'
+export {
+  default as PlusOutline,
+} from '@ant-design/icons/lib/outline/PlusOutline'
+
+// eye
+export {
+  default as EyeOutline,
+} from '@ant-design/icons/lib/outline/EyeOutline'
+export {
+  default as EyeInvisibleOutline,
+} from '@ant-design/icons/lib/outline/EyeInvisibleOutline'
+export {
+  default as EyeFill,
+} from '@ant-design/icons/lib/fill/EyeFill'
+export {
+  default as EyeInvisibleFill,
+} from '@ant-design/icons/lib/fill/EyeInvisibleFill'
+export {
+  default as EyeTwoTone,
+} from '@ant-design/icons/lib/twotone/EyeTwoTone'
+export {
+  default as EyeInvisibleTwoTone,
+} from '@ant-design/icons/lib/twotone/EyeInvisibleTwoTone'
+
+//delete
+export {
+  default as DeleteOutline,
+} from '@ant-design/icons/lib/outline/DeleteOutline'
+export {
+  default as DeleteFill,
+} from '@ant-design/icons/lib/fill/DeleteFill'
+export {
+  default as DeleteTwoTone,
+} from '@ant-design/icons/lib/twotone/DeleteTwoTone'
+
+// file image
+export {
+  default as PictureOutline,
+} from '@ant-design/icons/lib/outline/PictureOutline'
+export {
+  default as PictureFill,
+} from '@ant-design/icons/lib/fill/PictureFill'
+export {
+  default as PictureTwoTone,
+} from '@ant-design/icons/lib/twotone/PictureTwoTone'
+
+
+export {
+  default as ExclamationCircleOutline,
+} from '@ant-design/icons/lib/outline/ExclamationCircleOutline'
+export {
+  default as ExclamationCircleFill,
+} from '@ant-design/icons/lib/fill/ExclamationCircleFill'
+export {
+  default as ExclamationCircleTwoTone,
+} from '@ant-design/icons/lib/twotone/ExclamationCircleTwoTone'
+
+export {
+  default as InfoCircleOutline,
+} from '@ant-design/icons/lib/outline/InfoCircleOutline'
+export {
+  default as InfoCircleFill,
+} from '@ant-design/icons/lib/fill/InfoCircleFill'
+export {
+  default as InfoCircleTwoTone,
+} from '@ant-design/icons/lib/twotone/InfoCircleTwoTone'

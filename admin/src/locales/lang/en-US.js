@@ -25,6 +25,8 @@ export default {
       stepform: 'Step Form',
       advancedform: 'Advanced Form',
     },
+    'list': 'Data List',
+    'table': 'Customer Manage',
     nav1: 'Nav 1',
     nav2: 'Nav 2',
     nav3: 'Nav 3',

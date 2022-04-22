@@ -16,7 +16,7 @@ export default {
     home: '首页',
     dashboard: {
       default: '仪表盘',
-      welcome: '欢迎',
+      welcome: '欢迎使用',
       workplace: '工作台',
     },
     form: {
@@ -25,6 +25,8 @@ export default {
       stepform: '分步表单',
       advancedform: '高级表单',
     },
+    'list': '信息管理',
+    'table': '客户信息管理',
     nav1: '导航1',
     nav2: '导航2',
     nav3: '导航3',
@@ -50,7 +52,7 @@ export default {
           tab2: '标签2',
           tab3: '标签3',
         },
-      },
+      }
     },
   },
 

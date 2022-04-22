@@ -1,35 +1,25 @@
 <template>
   <div>
-    <h2>{{ $t('pages.dashboard.welcome.tips') }}</h2>
-    <div class="demo-wrapper">
-      <a-button @click="showLoading" style="margin-right: 12px;">
-        {{ $t('pages.dashboard.welcome.show-loading') }}
-      </a-button>
-      <a-button @click="hideLoading">
-        {{ $t('pages.dashboard.welcome.hide-loading') }}
-      </a-button>
-    </div>
+    <h2>欢迎使用信息管理平台</h2>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'WelcomePage',
+  name: "WelcomePage",
   methods: {
-    showLoading () {
-      this.$loading.show({ tip: '3 秒后自动隐藏' })
+    showLoading() {
+      this.$loading.show({ tip: "3 秒后自动隐藏" });
 
       setTimeout(() => {
-        this.$loading.hide()
-      }, 3000)
+        this.$loading.hide();
+      }, 3000);
     },
-    hideLoading () {
-      this.$loading.hide()
-    },
-  },
-}
+    hideLoading() {
+      this.$loading.hide();
+    }
+  }
+};
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>

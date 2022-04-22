@@ -5,7 +5,6 @@ import request from '@/utils/request'
  * parameter: {
  *     username: '',
  *     password: '',
- *     remember_me: true,
  *     captcha: '12345'
  * }
  * @param parameter
@@ -13,15 +12,7 @@ import request from '@/utils/request'
  */
 export function login(parameter) {
   return request({
-    url: '/login/account',
-    method: 'post',
-    data: parameter,
-  })
-}
-
-export function getSmsCaptcha(parameter) {
-  return request({
-    url: '/message/sms',
+    url: '/admin/user/login',
     method: 'post',
     data: parameter,
   })
@@ -29,18 +20,8 @@ export function getSmsCaptcha(parameter) {
 
 export function getInfo() {
   return request({
-    url: '/currentUser',
+    url: '/admin/user/info',
     method: 'get',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-    },
-  })
-}
-
-export function logout() {
-  return request({
-    url: '/logout',
-    method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
     },
