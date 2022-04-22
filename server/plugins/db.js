@@ -135,6 +135,25 @@ module.exports = {
         });
       })
     })
+  },
+
+  deleteByIds: (tableName, ids) => {
+    if (!(ids instanceof Array)) {
+      throw 'ids传值类型错误'
+    }
+    let idsPlaceholder = ids.map(() => "?");
+    let sql = `DELETE FROM ${tableName} WHERE id in (${idsPlaceholder.join(',')})`
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query(sql, ids, (error, results, fields) => {
+          connection.release();
+          if (error) {
+            reject(error);
+          }
+          resolve(results)
+        });
+      })
+    })
   }
 }
 

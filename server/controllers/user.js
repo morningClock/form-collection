@@ -75,6 +75,24 @@ async function doLogin(req, res, next) {
 }
 
 /**
+ * 获取用户信息
+ * @param {*} token 
+ */
+async function getInfo(req, res, next) {
+  const { id } = req.user;
+  const queryObj = await db.find("SELECT * FROM fc_user WHERE id = ?", [id]);
+  const user = queryObj[0]
+  if (user.password) {
+    delete user.password;
+  }
+  res.send({
+    code: 0,
+    message: '请求成功',
+    data: user
+  });
+}
+
+/**
  * POST /register
  * [注册接口]
  * @return 
@@ -115,5 +133,6 @@ module.exports = {
   checkCaptcha,
   doLogin,
   doRegister,
+  getInfo,
   resetPassword
 }

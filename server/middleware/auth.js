@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken') 
-const keys = require('../config/keys')
+const jwt = require('jsonwebtoken')
+const keys = require('../configs/keys')
 
 module.exports = (options) => {
   return async (req, res, next) => {
@@ -11,8 +11,8 @@ module.exports = (options) => {
       // 继续执行接口
       next()
     }
-    catch(err) {
-      res.status(402).send({message:'token 无效'})
+    catch (err) {
+      res.status(402).send({ message: 'token 无效' })
     }
   }
 }

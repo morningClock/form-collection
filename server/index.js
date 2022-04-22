@@ -21,3 +21,7 @@ app.use('/uploads', express.static(__dirname + '/uploads'))
 app.listen(3000, () => {
   console.log('http://localhost:3000')
 })
+
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception: ' + err);
+});

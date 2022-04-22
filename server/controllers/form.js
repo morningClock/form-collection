@@ -4,7 +4,8 @@ const { nanoid } = require('nanoid');
 const db = require('../plugins/db');
 const moment = require('moment')
 const fs = require('fs-extra')
-const path = require('path')
+const path = require('path');
+const { count, log } = require('console');
 
 
 /**
@@ -12,10 +13,27 @@ const path = require('path')
  * @returns 
  */
 async function getCustomerList(req, res, next) {
-  const status = req.query.status || 0;
-  let data = await db.find("select * from fc_customer where 'status' = ?", [status]);
+  const status = parseInt(req.query.status) || 0;
+  const pageNo = parseInt(req.query.pageNo);
+  const pageSize = parseInt(req.query.pageSize);
+  const sql = "SELECT * FROM fc_customer WHERE 'status' = ? ORDER BY modified_time DESC LIMIT ?,? ";
+  let data = await db.find(sql, [status, (pageNo - 1) * pageSize, pageSize]);
   if (!data) data = []
-  return res.send(data)
+  const searchCount = await db.find("SELECT COUNT(*) as total FROM fc_customer WHERE 'status' = ?", [status]);
+  const totalCount = searchCount[0].total;
+  const totalPage = Math.ceil(totalCount / pageSize);
+
+  return res.send({
+    code: 0,
+    message: '',
+    result: {
+      pageNo,
+      pageSize,
+      data,
+      totalCount,
+      totalPage
+    }
+  })
 }
 
 /**
@@ -23,12 +41,30 @@ async function getCustomerList(req, res, next) {
  * @returns 
  */
 async function findCustomerList(req, res, next) {
-  const status = req.query.status || 0;
+  const status = parseInt(req.query.status) || 0;
+  const pageNo = parseInt(req.query.pageNo);
+  const pageSize = parseInt(req.query.pageSize);
   const name = '%' + (req.query.name || '') + '%';
-  console.log(name);
-  let data = await db.find("select * from fc_customer where 'status' = ? and name like  ?", [status, name]);
+  const sql = "SELECT * FROM fc_customer WHERE 'status' = ? AND name LIKE  ? ORDER BY modified_time LIMIT ?,?";
+  console.log(sql);
+  let data = await db.find(sql, [status, name, (pageNo - 1) * pageSize, pageSize]);
   if (!data) data = []
-  return res.send(data)
+
+  const searchCount = await db.find("select count(*) AS total from fc_customer where 'status' = ? and name like ?", [status, name]);
+  const totalCount = searchCount[0].total;
+  const totalPage = Math.ceil(totalCount / pageSize);
+
+  return res.send({
+    code: 0,
+    message: '',
+    result: {
+      pageNo,
+      pageSize,
+      data,
+      totalCount,
+      totalPage
+    }
+  })
 }
 
 
@@ -42,20 +78,20 @@ async function addCustomer(req, res, next) {
   let idCardImgFrontSaveURL = "";
   let idCardImgBackSaveURL = "";
   try {
-    idCardImgFrontSaveURL = await saveCacheImage(body.idCardImgFront);
-    idCardImgBackSaveURL = await saveCacheImage(body.idCardImgBack);
+    idCardImgFrontSaveURL = await saveCacheImage(body.id_card_img_front);
+    idCardImgBackSaveURL = await saveCacheImage(body.id_card_img_back);
   } catch (e) {
     return res.status(500).send("保存文件错误")
   }
   try {
     await db.insertOne('fc_customer', {
       id: nanoid(),
-      'wx_name': body.wxName,
+      'wx_name': body.wx_name,
       'name': body.name,
-      'phone': body.form,
-      'id_card_number': body.idCardNumber,
+      'phone': body.phone,
+      'id_card_number': body.id_card_number,
       'id_card_img_front': idCardImgFrontSaveURL,
-      'id_card_img_back': idCardImgFrontSaveURL,
+      'id_card_img_back': idCardImgBackSaveURL,
       'remark': body.remark,
       'create_time': time,
       'modified_time': time
@@ -72,7 +108,7 @@ async function addCustomer(req, res, next) {
 async function saveCacheImage(imagePath) {
   // 取文件名称
   return new Promise((resolve, reject) => {
-    const pathname = new URL(imagePath).pathname;
+    const pathname = imagePath;
     const filename = pathname.split('/').pop();
     if (pathname.indexOf('/cache')) {
       const source = path.resolve(__dirname, '../cache', filename);
@@ -80,10 +116,11 @@ async function saveCacheImage(imagePath) {
       fs.copy(source, dest).then(() => {
         resolve(`/uploads/${filename}`)
       }).catch(err => {
+        console.log(err);
         reject(err)
       })
     } else {
-      resolve(`/uploads/${filename}`)
+      resolve(imagePath)
     }
   })
 }
@@ -98,23 +135,23 @@ async function updateCustomer(req, res, next) {
   let idCardImgFrontSaveURL = "";
   let idCardImgBackSaveURL = "";
   try {
-    idCardImgFrontSaveURL = await saveCacheImage(body.idCardImgFront);
-    idCardImgBackSaveURL = await saveCacheImage(body.idCardImgBack);
+    idCardImgFrontSaveURL = await saveCacheImage(body.id_card_img_front);
+    idCardImgBackSaveURL = await saveCacheImage(body.id_card_img_back);
   } catch (e) {
     return res.status(500).send("保存文件错误")
   }
   try {
     await db.updateOneById('fc_customer', {
-      'wx_name': body.wxName,
+      'wx_name': body.wx_name,
       'name': body.name,
-      'phone': body.form,
-      'id_card_number': body.idCardNumber,
+      'phone': body.phone,
+      'id_card_number': body.id_card_number,
       'id_card_img_front': idCardImgFrontSaveURL,
-      'id_card_img_back': idCardImgFrontSaveURL,
+      'id_card_img_back': idCardImgBackSaveURL,
       'remark': body.remark,
       'modified_time': time
     }, {
-      id: req.query.id
+      id: body.id
     })
     return res.send("更新成功")
   } catch (e) {
@@ -124,7 +161,25 @@ async function updateCustomer(req, res, next) {
 }
 
 async function deleteCustomer(req, res, next) {
-  res.send('删除成功')
+  const id = req.query.id
+  try {
+    await db.deleteByIds('fc_customer', [id])
+    res.send('删除成功')
+  } catch (e) {
+    console.error(e);
+    res.send('删除失败')
+  }
+}
+
+async function deleteBatchCustomer(req, res, next) {
+  const ids = req.query.ids.split(',')
+  try {
+    await db.deleteByIds('fc_customer', ids)
+    res.send('删除成功')
+  } catch (e) {
+    console.error(e);
+    res.send('删除失败')
+  }
 }
 
 /**
@@ -140,7 +195,7 @@ function uploadFile(req, res, next) {
   }
   const file = req.file
   // 暂存缓存区
-  file.url = `${URL_PATH}/cache/${file.filename}`
+  file.url = `/cache/${file.filename}`
 
   return res.status(200).send({
     status: 'success',
@@ -156,5 +211,6 @@ module.exports = {
   addCustomer,
   updateCustomer,
   deleteCustomer,
+  deleteBatchCustomer,
   uploadFile
 }
