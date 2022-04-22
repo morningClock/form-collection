@@ -2,7 +2,7 @@
 node_modules
 /dist
 /cache
-/updates
+/uploads
 
 
 # local env files
