@@ -5,8 +5,16 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="名称">
-                <a-input v-model="queryParam.id" placeholder="" />
+              <a-form-item label="微信名称">
+                <a-input
+                  v-model="queryParam.wx_name"
+                  placeholder="微信名称模糊查询"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="姓名">
+                <a-input v-model="queryParam.name" placeholder="姓名模糊查询" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -17,42 +25,37 @@
                   default-value="0"
                 >
                   <a-select-option value="0">未审核</a-select-option>
-                  <a-select-option value="1">正在处理</a-select-option>
+                  <a-select-option value="1">已审核</a-select-option>
                   <a-select-option value="2">已完成</a-select-option>
                   <a-select-option value="3">已取消</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker
-                    v-model="queryParam.date"
-                    style="width: 100%"
-                    placeholder="请输入更新日期"
-                  />
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="日期筛选">
+                <a-range-picker
+                  v-model="datePicker"
+                  :ranges="{
+                    Today: [moment(), moment()],
+                    'This Month': [moment(), moment().endOf('month')]
+                  }"
+                  format="YYYY-MM-DD HH:mm:ss"
+                  :placeholder="['开始时间', '结束时间']"
+                  @change="onDateChange"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
               <span
                 class="table-page-search-submitButtons"
-                :style="
-                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                "
+                :style="{ float: 'left', overflow: 'hidden' } || {}"
               >
                 <a-button type="primary" @click="$refs.table.refresh(true)"
                   >查询</a-button
                 >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (this.queryParam = {})"
+                <a-button style="margin-left: 8px" @click="handleReset"
                   >重置</a-button
                 >
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
               </span>
             </a-col>
           </a-row>
@@ -67,7 +70,7 @@
               ><a-icon type="delete" />删除</a-menu-item
             >
             <!-- lock | unlock -->
-            <a-menu-item key="2" @click="handleStatus"
+            <a-menu-item key="2" @click="handleStatusBatch"
               ><a-icon type="lock" />审核</a-menu-item
             >
           </a-menu>
@@ -148,13 +151,15 @@
 
 <script>
 import moment from "moment";
+
 import { STable, Ellipsis } from "@/components";
 import {
   getCustomerList,
   addCustomer,
   updateCustomer,
   deleteCustomer,
-  deleteBatchCustomer
+  deleteBatchCustomer,
+  updateBatchCustomerStatus
 } from "@/api/customer";
 
 import StepByStepModal from "./modules/StepByStepModal";
@@ -174,6 +179,11 @@ const columns = [
   {
     title: "微信名称",
     dataIndex: "wx_name",
+    width: "100px"
+  },
+  {
+    title: "姓名",
+    dataIndex: "name",
     width: "100px"
   },
   {
@@ -232,7 +242,7 @@ const statusMap = {
   },
   1: {
     status: "processing",
-    text: "正在处理"
+    text: "已审核"
   },
   2: {
     status: "success",
@@ -255,12 +265,11 @@ export default {
   data() {
     this.columns = columns;
     return {
+      moment,
       // create model
       visible: false,
       confirmLoading: false,
       mdl: null,
-      // 高级搜索 展开/关闭
-      advanced: false,
       // 查询参数
       queryParam: {},
       // 加载数据方法 必须为 Promise 对象
@@ -271,7 +280,10 @@ export default {
         });
       },
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      dateFormat: "YYYY/MM/DD",
+      monthFormat: "YYYY/MM",
+      datePicker: []
     };
   },
   filters: {
@@ -350,10 +362,15 @@ export default {
       form.resetFields(); // 清理表单数据（可不做）
     },
     handleSub(record) {
-      if (record.status !== 0) {
-        this.$message.info(`${record.no} 订阅成功`);
-      } else {
-        this.$message.error(`${record.no} 订阅失败，规则已关闭`);
+      if (record.status === 0) {
+        updateBatchCustomerStatus({ ids: record.id, status: 1 })
+          .then(res => {
+            this.$refs.table.refresh();
+            this.$message.success("修改成功");
+          })
+          .catch(() => {
+            this.$message.error(`修改失败`);
+          });
       }
     },
     handleDelete(record) {
@@ -373,9 +390,6 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
     },
-    toggleAdvanced() {
-      this.advanced = !this.advanced;
-    },
     resetSearchForm() {
       this.queryParam = {
         date: moment(new Date())
@@ -394,8 +408,27 @@ export default {
           this.$message.info("删除失败");
         });
     },
-    handleStatus() {
+    handleStatusBatch() {
       // 改变查阅状态
+      let ids = this.selectedRows.map(item => item.id);
+      updateBatchCustomerStatus({ ids: ids.join(","), status: 1 })
+        .then(res => {
+          this.$refs.table.refresh();
+          this.$refs.table.clearSelected();
+          this.$message.info("修改成功");
+        })
+        .catch(() => {
+          this.$message.info("修改失败");
+        });
+    },
+    onDateChange(dates, dateStrings) {
+      this.queryParam.date = [];
+      this.queryParam.date[0] = dateStrings[0];
+      this.queryParam.date[1] = dateStrings[1];
+    },
+    handleReset() {
+      this.queryParam = {};
+      this.$refs.table.refresh(true);
     }
   }
 };

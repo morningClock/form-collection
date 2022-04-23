@@ -5,52 +5,60 @@ const db = require('../plugins/db');
 const moment = require('moment')
 const fs = require('fs-extra')
 const path = require('path');
-const { count, log } = require('console');
+const { log } = require('console');
 
 
 /**
- * 查询列表，status过滤
+ * 查询列表，带过滤
  * @returns 
  */
 async function getCustomerList(req, res, next) {
-  const status = parseInt(req.query.status) || 0;
-  const pageNo = parseInt(req.query.pageNo);
-  const pageSize = parseInt(req.query.pageSize);
-  const sql = "SELECT * FROM fc_customer WHERE 'status' = ? ORDER BY modified_time DESC LIMIT ?,? ";
-  let data = await db.find(sql, [status, (pageNo - 1) * pageSize, pageSize]);
-  if (!data) data = []
-  const searchCount = await db.find("SELECT COUNT(*) as total FROM fc_customer WHERE 'status' = ?", [status]);
-  const totalCount = searchCount[0].total;
-  const totalPage = Math.ceil(totalCount / pageSize);
+  let query = req.query;
 
-  return res.send({
-    code: 0,
-    message: '',
-    result: {
-      pageNo,
-      pageSize,
-      data,
-      totalCount,
-      totalPage
+  // 查询条件提取
+  const pageNo = parseInt(query.pageNo);
+  const pageSize = parseInt(query.pageSize);
+  let values = [];
+  let equalPart = '';
+  let searchPart = '';
+  let datePart = '';
+  // 条件查询
+  if (query.status !== undefined) {
+    equalPart = `status = ?`
+    values.push(parseInt(query.status))
+  }
+
+  // 模糊查询信息
+  let queryKeys = Object.keys(query).filter((key) => !(key === 'pageNo' || key === 'pageSize' || key === 'date' || key === 'status'));
+  searchPart = queryKeys.map((key) => `${key} LIKE ?`).join(" AND ");
+  let sqlValue = queryKeys.map((key) => `%${query[key]}%`);
+  values = values.concat(sqlValue);
+
+
+  // 过滤日期处理
+  if (query.date) {
+    const start = moment(new Date(query.date[0])).format('YYYY-MM-DD HH:mm:ss');
+    const end = moment(new Date(query.date[1])).format('YYYY-MM-DD HH:mm:ss');
+    if (equalPart !== '' || searchPart !== '') {
+      datePart += ' AND '
     }
-  })
-}
-
-/**
- * 模糊查询列表
- * @returns 
- */
-async function findCustomerList(req, res, next) {
-  const status = parseInt(req.query.status) || 0;
-  const pageNo = parseInt(req.query.pageNo);
-  const pageSize = parseInt(req.query.pageSize);
-  const name = '%' + (req.query.name || '') + '%';
-  const sql = "SELECT * FROM fc_customer WHERE 'status' = ? AND name LIKE  ? ORDER BY modified_time LIMIT ?,?";
-  console.log(sql);
-  let data = await db.find(sql, [status, name, (pageNo - 1) * pageSize, pageSize]);
+    datePart += `modified_time >= ? AND modified_time <= ?`;
+    values.push(start)
+    values.push(end)
+  }
+  let baseSql = 'SELECT * FROM fc_customer '
+  if (equalPart !== '' || searchPart !== '' || datePart !== '') {
+    baseSql += ' WHERE '
+  }
+  let sql = `${baseSql} ${equalPart} ${equalPart && searchPart !== '' ? `AND ${searchPart}` : searchPart}  ${datePart}  ORDER BY modified_time DESC LIMIT ?,?`;
+  let data = await db.find(sql, [...values, (pageNo - 1) * pageSize, pageSize]);
   if (!data) data = []
-
-  const searchCount = await db.find("select count(*) AS total from fc_customer where 'status' = ? and name like ?", [status, name]);
+  let baseCountSql = 'SELECT count(*) AS total FROM fc_customer'
+  if (equalPart !== '' || searchPart !== '' || datePart !== '') {
+    baseCountSql += ' WHERE '
+  }
+  let countSql = `${baseCountSql} ${equalPart} ${equalPart && searchPart !== '' ? `AND ${searchPart}` : searchPart} ${datePart}`;
+  const searchCount = await db.find(countSql, values);
   const totalCount = searchCount[0].total;
   const totalPage = Math.ceil(totalCount / pageSize);
 
@@ -109,6 +117,7 @@ async function saveCacheImage(imagePath) {
   // 取文件名称
   return new Promise((resolve, reject) => {
     const pathname = imagePath;
+    console.log(imagePath);
     const filename = pathname.split('/').pop();
     if (pathname.indexOf('/cache')) {
       const source = path.resolve(__dirname, '../cache', filename);
@@ -123,6 +132,22 @@ async function saveCacheImage(imagePath) {
       resolve(imagePath)
     }
   })
+}
+
+async function updateBatchCustomerStatus(req, res, next) {
+  let values = [];
+  values.push(req.query.status)
+  const ids = req.query.ids.split(",")
+  let placeholder = ids.map(() => '?').join(',')
+  values = [...values, ...ids]
+  try {
+    const sql = `UPDATE fc_customer SET status = ? where id in (${placeholder})`;
+    db.querySync(sql, values)
+    return res.send("更新成功")
+  } catch (e) {
+    console.log("sql错误", e);
+    return res.status(500).send("更新错误")
+  }
 }
 
 /**
@@ -207,10 +232,10 @@ function uploadFile(req, res, next) {
 
 module.exports = {
   getCustomerList,
-  findCustomerList,
   addCustomer,
   updateCustomer,
   deleteCustomer,
   deleteBatchCustomer,
-  uploadFile
+  uploadFile,
+  updateBatchCustomerStatus
 }

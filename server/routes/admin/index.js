@@ -2,7 +2,7 @@ const express = require('express')
 const upload = require('../../middleware/upload')
 // controller
 const { getInfo, getCaptcha, checkCaptcha, doLogin, doRegister, resetPassword } = require('../../controllers/user')
-const { deleteBatchCustomer, addCustomer, getCustomerList, findCustomerList, updateCustomer, deleteCustomer, uploadFile } = require('../../controllers/form')
+const { updateBatchCustomerStatus, deleteBatchCustomer, addCustomer, getCustomerList, updateCustomer, deleteCustomer, uploadFile } = require('../../controllers/form')
 
 const authMiddleware = require('../../middleware/auth')
 
@@ -21,11 +21,11 @@ module.exports = app => {
   router.post('/user/reset', resetPassword);
 
   router.get('/customer/list', getCustomerList);
-  router.get('/customer/find', findCustomerList);
   router.post('/customer/add', addCustomer);
   router.post('/customer/update', updateCustomer);
   router.delete('/customer/delete', deleteCustomer);
   router.delete('/customer/deletebatch', deleteBatchCustomer);
+  router.put('/customer/status', updateBatchCustomerStatus);
 
 
   router.post('/upload', upload.single('file'), uploadFile)

@@ -5,7 +5,8 @@ const api = {
   add: '/admin/customer/add',
   update: '/admin/customer/update',
   delete: '/admin/customer/delete',
-  deleteBatch: '/admin/customer/deletebatch'
+  deleteBatch: '/admin/customer/deletebatch',
+  updateStatusBatch: '/admin/customer/status'
 }
 
 export function getCustomerList(parameter) {
@@ -40,6 +41,13 @@ export function deleteBatchCustomer(parameter) {
   return request({
     url: api.deleteBatch,
     method: 'delete',
+    params: parameter
+  })
+}
+export function updateBatchCustomerStatus(parameter) {
+  return request({
+    url: api.updateStatusBatch,
+    method: 'put',
     params: parameter
   })
 }
