@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="header">订购信息登记</div>
+    <div class="header">信息登记</div>
     <van-form @submit="onSubmit">
       <van-field
-        v-model="formData.wxName"
+        v-model="formData.wx_name"
         name="微信名称"
         label="微信名称"
         placeholder="请输入微信名称"
@@ -14,21 +14,30 @@
         name="姓名"
         label="姓名"
         placeholder="请输入姓名"
-        :rules="[{ required: true, message: '请填写姓名' }]"
+        :rules="[
+          { required: true, message: '请填写姓名' },
+          { validator: isName, message: '请填写汉字姓名' },
+        ]"
       />
       <van-field
         v-model="formData.phone"
         name="联系电话"
         label="联系电话"
         placeholder="请输入联系电话"
-        :rules="[{ required: true, message: '请填写联系电话' }]"
+        :rules="[
+          { required: true, message: '请填写联系电话' },
+          { validator: isPhone, message: '请填写正确的国内13位手机号' },
+        ]"
       />
       <van-field
-        v-model="formData.idCardNumber"
+        v-model="formData.id_card_number"
         name="身份证号码"
         label="身份证号码"
         placeholder="请输入身份证号码"
-        :rules="[{ required: true, message: '请填写身份证号码' }]"
+        :rules="[
+          { required: true, message: '请填写身份证号码' },
+          { validator: isIDCard, message: '请填写正确的15或18位身份证号码' },
+        ]"
       />
       <van-field
         name="uploader"
@@ -42,7 +51,7 @@
               v-model="idCardImgFrontPreview"
               preview-size="100px"
               :before-read="beforeRead"
-              :after-read="(file) => afterRead(file, 'idCardImgFront')"
+              :after-read="(file) => afterRead(file, 'id_card_img_front')"
               max-count="1"
               :max-size="2 * 1024 * 1024"
               @oversize="onOversize"
@@ -56,7 +65,7 @@
               v-model="idCardImgBackPreview"
               preview-size="100px"
               :before-read="beforeRead"
-              :after-read="(file) => afterRead(file, 'idCardImgBack')"
+              :after-read="(file) => afterRead(file, 'id_card_img_back')"
               max-count="1"
               :max-size="2 * 1024 * 1024"
               @oversize="onOversize"
@@ -84,25 +93,30 @@
 </template>
 
 <script>
+import { isName, isIDCard, isPhone } from "@/utils/validate";
 export default {
   name: "FormCollection",
   data() {
     return {
+      imgHost: "http://localhost:3000",
       formData: this.createForm(),
       idCardImgFrontPreview: [],
       idCardImgBackPreview: [],
     };
   },
   methods: {
+    isName,
+    isIDCard,
+    isPhone,
     createForm() {
       return {
-        wxName: undefined,
+        wx_name: undefined,
         wxAvatar: undefined,
         name: undefined,
         phone: undefined,
-        idCardNumber: undefined,
-        idCardImgFront: undefined,
-        idCardImgBack: undefined,
+        id_card_number: undefined,
+        id_card_img_front: undefined,
+        id_card_img_back: undefined,
         remark: "",
       };
     },
@@ -123,10 +137,10 @@ export default {
       }
     },
     uploadValidator() {
-      const { idCardImgFront, idCardImgBack } = this.formData;
-      if (idCardImgFront == "" || idCardImgFront == undefined) {
+      const { id_card_img_front, id_card_img_back } = this.formData;
+      if (id_card_img_front == "" || id_card_img_front == undefined) {
         return false;
-      } else if (idCardImgBack == "" || idCardImgBack == undefined) {
+      } else if (id_card_img_back == "" || id_card_img_back == undefined) {
         return false;
       }
       return true;
@@ -144,9 +158,8 @@ export default {
       file.message = "上传中";
       try {
         let imgURL = await this.uploadImage(file.file);
-        console.log("上传成功", imgURL);
         this.formData[dataName] = imgURL;
-        file.content = imgURL;
+        file.content = this.imgHost + imgURL;
         file.status = "";
         file.message = "";
       } catch (e) {
@@ -186,8 +199,8 @@ export default {
       this.$toast("最大只能上传1MB大小的图片！");
     },
     removeImg() {
-      this.formData.idCardImgFront = "";
-      this.formData.idCardImgBack = "";
+      this.formData.id_card_img_front = "";
+      this.formData.id_card_img_back = "";
     },
   },
 };
