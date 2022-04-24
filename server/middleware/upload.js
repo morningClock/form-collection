@@ -1,14 +1,16 @@
 const multer = require('multer')
-const { nanoid } = require('nanoid')
+const md5 = require('md5');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, __dirname + '/../cache/')
   },
   filename: (req, file, cb) => {
+    let filename = md5(JSON.stringify(file));
     if (file.mimetype == 'image/png') {
-      cb(null, nanoid() + '.png');
+      cb(null, filename + '.png');
     } else if (file.mimetype == 'image/jpeg') {
-      cb(null, nanoid() + '.jpg');
+      cb(null, filename + '.jpg');
     }
   }
 })
