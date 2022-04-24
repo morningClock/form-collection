@@ -171,3 +171,17 @@ export {
 export {
   default as InfoCircleTwoTone,
 } from '@ant-design/icons/lib/twotone/InfoCircleTwoTone'
+
+export {
+  default as FileExcelOutline,
+} from '@ant-design/icons/lib/outline/FileExcelOutline'
+export {
+  default as FileExcelFill,
+} from '@ant-design/icons/lib/fill/FileExcelFill'
+export {
+  default as FileExcelTwoTone,
+} from '@ant-design/icons/lib/twotone/FileExcelTwoTone'
+
+export {
+  default as CloudDownloadOutline,
+} from '@ant-design/icons/lib/outline/CloudDownloadOutline'

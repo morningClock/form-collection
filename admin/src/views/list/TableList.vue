@@ -64,7 +64,7 @@
 
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="handleAdd">录入</a-button>
-        <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-dropdown>
           <a-menu slot="overlay">
             <a-menu-item key="1" @click="handleDeleteBatch"
               ><a-icon type="delete" />删除</a-menu-item
@@ -78,6 +78,12 @@
             批量操作 <a-icon type="down" />
           </a-button>
         </a-dropdown>
+        <a-button
+          type="primary"
+          icon="cloud-download"
+          @click="handleExportExcel"
+          >导出所有数据为Excel</a-button
+        >
       </div>
 
       <s-table
@@ -102,20 +108,10 @@
           />
         </span>
         <span slot="id_card_img_front" slot-scope="text">
-          <img
-            :src="'http://localhost:3000' + text"
-            alt=""
-            width="100%"
-            height="80px"
-          />
+          <img :src="baseURL + text" alt="" width="100%" height="80px" />
         </span>
         <span slot="id_card_img_back" slot-scope="text">
-          <img
-            :src="'http://localhost:3000' + text"
-            alt=""
-            width="100%"
-            height="80px"
-          />
+          <img :src="baseURL + text" alt="" width="100%" height="80px" />
         </span>
 
         <span slot="action" slot-scope="text, record">
@@ -159,11 +155,14 @@ import {
   updateCustomer,
   deleteCustomer,
   deleteBatchCustomer,
-  updateBatchCustomerStatus
+  updateBatchCustomerStatus,
+  downloadCustomerExcel
 } from "@/api/customer";
 
 import StepByStepModal from "./modules/StepByStepModal";
 import CreateForm from "./modules/CreateForm";
+import { baseURL } from "./config";
+import { download } from "@/utils/file";
 
 const columns = [
   {
@@ -171,11 +170,11 @@ const columns = [
     width: "50px",
     scopedSlots: { customRender: "serial" }
   },
-  {
-    title: "微信头像",
-    dataIndex: "wx_avatar",
-    width: "100px"
-  },
+  // {
+  //   title: "微信头像",
+  //   dataIndex: "wx_avatar",
+  //   width: "100px"
+  // },
   {
     title: "微信名称",
     dataIndex: "wx_name",
@@ -265,6 +264,7 @@ export default {
   data() {
     this.columns = columns;
     return {
+      baseURL,
       moment,
       // create model
       visible: false,
@@ -429,6 +429,13 @@ export default {
     handleReset() {
       this.queryParam = {};
       this.$refs.table.refresh(true);
+    },
+    handleExportExcel() {
+      console.log("export Excel");
+      downloadCustomerExcel().then(res => {
+        let excelURL = baseURL + res.data.download;
+        download(excelURL);
+      });
     }
   }
 };

@@ -122,7 +122,7 @@ export default {
             uid: count,
             name: item,
             status: "done",
-            url: config.baseImgUrl + item
+            url: config.baseURL + item
           });
           count--;
         });

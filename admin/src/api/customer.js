@@ -6,7 +6,8 @@ const api = {
   update: '/admin/customer/update',
   delete: '/admin/customer/delete',
   deleteBatch: '/admin/customer/deletebatch',
-  updateStatusBatch: '/admin/customer/status'
+  updateStatusBatch: '/admin/customer/status',
+  downloadCustomerExcel: '/admin/customer/excel',
 }
 
 export function getCustomerList(parameter) {
@@ -48,6 +49,13 @@ export function updateBatchCustomerStatus(parameter) {
   return request({
     url: api.updateStatusBatch,
     method: 'put',
+    params: parameter
+  })
+}
+export function downloadCustomerExcel(parameter) {
+  return request({
+    url: api.downloadCustomerExcel,
+    method: 'get',
     params: parameter
   })
 }

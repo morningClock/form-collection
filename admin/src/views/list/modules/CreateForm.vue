@@ -36,9 +36,9 @@
             ]"
           />
         </a-form-item>
-        <a-form-item label="微信头像">
+        <!-- <a-form-item label="微信头像">
           <a-input v-decorator="['wx_avatar']" />
-        </a-form-item>
+        </a-form-item> -->
         <a-form-item label="姓名">
           <a-input
             v-decorator="[
@@ -48,7 +48,8 @@
                   {
                     required: true,
                     message: '必须填写姓名'
-                  }
+                  },
+                  { validator: checkName }
                 ]
               }
             ]"
@@ -63,7 +64,8 @@
                   {
                     required: true,
                     message: '必须填写电话号码'
-                  }
+                  },
+                  { validator: checkPhone }
                 ]
               }
             ]"
@@ -78,7 +80,8 @@
                   {
                     required: true,
                     message: '必须填写身份证号码'
-                  }
+                  },
+                  { validator: checkIDCard }
                 ]
               }
             ]"
@@ -122,6 +125,7 @@
 <script>
 import pick from "lodash.pick";
 import ImageUpload from "./ImageUpload";
+import { isPhone, isIDCard, isName } from "@/utils/validate";
 
 // 表单字段
 const fields = [
@@ -178,6 +182,29 @@ export default {
     this.$watch("model", () => {
       this.model && this.form.setFieldsValue(pick(this.model, fields));
     });
+  },
+  methods: {
+    checkName(rule, value, callback) {
+      if (isName(value)) {
+        callback();
+        return;
+      }
+      callback("请输入汉字");
+    },
+    checkPhone(rule, value, callback) {
+      if (isPhone(value)) {
+        callback();
+        return;
+      }
+      callback("请输入13位手机号");
+    },
+    checkIDCard(rule, value, callback) {
+      if (isIDCard(value)) {
+        callback();
+        return;
+      }
+      callback("请输入正确的身份证号码");
+    }
   }
 };
 </script>
