@@ -117,9 +117,8 @@ async function saveCacheImage(imagePath) {
   // 取文件名称
   return new Promise((resolve, reject) => {
     const pathname = imagePath;
-    console.log(imagePath);
     const filename = pathname.split('/').pop();
-    if (pathname.indexOf('/cache')) {
+    if (pathname.indexOf('/cache') !== -1) {
       const source = path.resolve(__dirname, '../cache', filename);
       const dest = path.resolve(__dirname, '../uploads', filename);
       fs.copy(source, dest).then(() => {
