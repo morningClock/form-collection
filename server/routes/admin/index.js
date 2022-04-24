@@ -2,7 +2,7 @@ const express = require('express')
 const upload = require('../../middleware/upload')
 // controller
 const { getInfo, getCaptcha, checkCaptcha, doLogin, doRegister, resetPassword } = require('../../controllers/user')
-const { updateBatchCustomerStatus, deleteBatchCustomer, addCustomer, getCustomerList, updateCustomer, deleteCustomer, uploadFile } = require('../../controllers/form')
+const { downloadExcel, updateBatchCustomerStatus, deleteBatchCustomer, addCustomer, getCustomerList, updateCustomer, deleteCustomer, uploadFile } = require('../../controllers/form')
 
 const authMiddleware = require('../../middleware/auth')
 
@@ -20,12 +20,13 @@ module.exports = app => {
   router.get('/user/info', authMiddleware(), getInfo);
   router.post('/user/reset', resetPassword);
 
-  router.get('/customer/list', getCustomerList);
-  router.post('/customer/add', addCustomer);
-  router.post('/customer/update', updateCustomer);
-  router.delete('/customer/delete', deleteCustomer);
-  router.delete('/customer/deletebatch', deleteBatchCustomer);
-  router.put('/customer/status', updateBatchCustomerStatus);
+  router.get('/customer/list', authMiddleware(), getCustomerList);
+  router.post('/customer/add', authMiddleware(), addCustomer);
+  router.post('/customer/update', authMiddleware(), updateCustomer);
+  router.delete('/customer/delete', authMiddleware(), deleteCustomer);
+  router.delete('/customer/deletebatch', authMiddleware(), deleteBatchCustomer);
+  router.put('/customer/status', authMiddleware(), updateBatchCustomerStatus);
+  router.get('/customer/excel', authMiddleware(), downloadExcel);
 
 
   router.post('/upload', upload.single('file'), uploadFile)

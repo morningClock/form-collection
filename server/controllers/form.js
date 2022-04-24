@@ -5,7 +5,7 @@ const db = require('../plugins/db');
 const moment = require('moment')
 const fs = require('fs-extra')
 const path = require('path');
-const { log } = require('console');
+const { saveAsExcel } = require('../services/form');
 
 
 /**
@@ -228,6 +228,21 @@ function uploadFile(req, res, next) {
   })
 }
 
+/**
+ * 导出所有customer的数据，提供下载
+ */
+async function downloadExcel(req, res, next) {
+  const sql = "SELECT * FROM fc_customer";
+  const values = []
+  let results = await db.find(sql, values);
+  // 保存到本地
+  let excelUrl = await saveAsExcel(results);
+  res.status(200).send({
+    data: {
+      download: excelUrl
+    }
+  });
+}
 
 
 module.exports = {
@@ -237,5 +252,6 @@ module.exports = {
   deleteCustomer,
   deleteBatchCustomer,
   uploadFile,
-  updateBatchCustomerStatus
+  updateBatchCustomerStatus,
+  downloadExcel
 }
