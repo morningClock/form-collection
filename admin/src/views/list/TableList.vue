@@ -456,4 +456,7 @@ export default {
   border-radius: 0;
   background: #f2f2f2;
 }
+.table-operator button {
+  margin-top: 8px;
+}
 </style>
