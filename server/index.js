@@ -19,8 +19,8 @@ app.use('/cache', express.static(__dirname + '/cache'))
 app.use('/uploads', express.static(__dirname + '/uploads'))
 app.use('/export', express.static(__dirname + '/export'))
 
-app.listen(3000, () => {
-  console.log('http://localhost:3000')
+app.listen(3001, () => {
+  console.log('http://localhost:3001')
 })
 
 process.on('uncaughtException', function (err) {

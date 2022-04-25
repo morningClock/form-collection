@@ -1,5 +1,3 @@
-const URL_PATH = "http://localhost:3000"
-
 const { nanoid } = require('nanoid');
 const db = require('../plugins/db');
 const moment = require('moment')

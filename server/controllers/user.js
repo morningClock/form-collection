@@ -53,25 +53,30 @@ function checkCaptcha(req, res, next) {
  * @return 
  */
 async function doLogin(req, res, next) {
-  const { username, password } = req.body;
-  // 取出默认不取出的password值
-  const user = await db.findOne(`select * from fc_user where username = ?`, [username])
-  // 1.根据用户查询是否存在用户
-  if (!user) {
-    return res.status(421).send({ message: '用户不存在' })
-  }
-  // 2.校验密码
+  try {
+    const { username, password } = req.body;
+    // 取出默认不取出的password值
+    const user = await db.findOne(`select * from fc_user where username = ?`, [username])
+    // 1.根据用户查询是否存在用户
+    if (!user) {
+      return res.status(421).send({ message: '用户不存在' })
+    }
+    // 2.校验密码
 
-  const isValid = user.password === md5(req.body.password + keys.secret)
-  if (!isValid) {
-    return res.status(422).send({ message: '密码错误' })
+    const isValid = user.password === md5(password + keys.secret)
+    if (!isValid) {
+      return res.status(422).send({ message: '密码错误' })
+    }
+    // 3. 登录成功，返回token
+    const rules = {
+      id: user.id
+    }
+    const token = await jwt.sign(rules, keys.secret, { expiresIn: 60 * 60 * 24 })
+    return res.status(200).send({ token, message: '登陆成功!' })
+  } catch (e) {
+    console.error(e)
+    return res.status(500).send("服务端发生错误")
   }
-  // 3. 登录成功，返回token
-  const rules = {
-    id: user.id
-  }
-  const token = await jwt.sign(rules, keys.secret, { expiresIn: 60 * 60 * 24 })
-  return res.status(200).send({ token, message: '登陆成功!' })
 }
 
 /**
