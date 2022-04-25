@@ -71,6 +71,22 @@
             ]"
           />
         </a-form-item>
+        <a-form-item label="配送地址">
+          <a-textarea
+            allow-clear
+            v-decorator="[
+              'address',
+              {
+                rules: [
+                  {
+                    required: true,
+                    message: '必须填写配送地址'
+                  }
+                ]
+              }
+            ]"
+          />
+        </a-form-item>
         <a-form-item label="身份证号码">
           <a-input
             v-decorator="[
@@ -117,6 +133,9 @@
             ]"
           />
         </a-form-item>
+        <a-form-item label="备注">
+          <a-textarea allow-clear v-decorator="['remark']" />
+        </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
@@ -133,6 +152,7 @@ const fields = [
   "wx_name",
   "name",
   "phone",
+  "address",
   "id_card_number",
   "id_card_img_front",
   "id_card_img_back",

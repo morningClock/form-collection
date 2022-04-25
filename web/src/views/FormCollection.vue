@@ -30,6 +30,14 @@
         ]"
       />
       <van-field
+        v-model="formData.address"
+        type="textarea"
+        name="配送地址"
+        label="配送地址"
+        placeholder="请输入配送地址"
+        :rules="[{ required: true, message: '请填写配送地址' }]"
+      />
+      <van-field
         v-model="formData.id_card_number"
         name="身份证号码"
         label="身份证号码"
@@ -114,6 +122,7 @@ export default {
         wxAvatar: undefined,
         name: undefined,
         phone: undefined,
+        address: undefined,
         id_card_number: undefined,
         id_card_img_front: undefined,
         id_card_img_back: undefined,

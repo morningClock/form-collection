@@ -21,6 +21,7 @@ function saveAsExcel(results) {
     { header: '微信名称', key: 'wx_name', width: 20, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
     { header: '姓名', key: 'name', width: 20, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
     { header: '电话.', key: 'phone', width: 20, outlineLevel: 1, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
+    { header: '配送地址', key: 'address', width: 50, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
     { header: '身份证号码', key: 'IDCard', width: 30, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
     { header: '身份证正面图', key: 'IDCardImage1', width: 30, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
     { header: '身份证反面图', key: 'IDCardImage2', width: 30, style: { alignment: { vertical: 'middle', horizontal: 'left' } } },
@@ -50,6 +51,7 @@ function saveAsExcel(results) {
       wx_name,
       name,
       phone,
+      address,
       id_card_number,
       id_card_img_front,
       id_card_img_back,
@@ -57,7 +59,7 @@ function saveAsExcel(results) {
       create_time,
       modified_time
     } = data;
-    const row = [index + 1, wx_name, name, phone, id_card_number, '', '', remark, create_time, modified_time]
+    const row = [index + 1, wx_name, name, phone, address, id_card_number, '', '', remark, create_time, modified_time]
     worksheet.addRow(row);
 
     // 设置图片
@@ -66,14 +68,14 @@ function saveAsExcel(results) {
       worksheet,
       imagePath: id_card_img_front,
       row: index + 1,
-      col: 5
+      col: 6
     });
     await addImage({
       workbook,
       worksheet,
       imagePath: id_card_img_back,
       row: index + 1,
-      col: 6
+      col: 7
     });
   })
 

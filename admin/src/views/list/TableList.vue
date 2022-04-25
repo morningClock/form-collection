@@ -94,7 +94,7 @@
         :columns="columns"
         :data="loadData"
         :alert="true"
-        :scroll="{ x: 1600 }"
+        :scroll="{ x: 1900 }"
         :rowSelection="rowSelection"
         showPagination="auto"
       >
@@ -189,6 +189,11 @@ const columns = [
     title: "联系方式",
     dataIndex: "phone",
     width: "150px"
+  },
+  {
+    title: "配送地址",
+    dataIndex: "address",
+    width: "250px"
   },
   {
     title: "状态",
@@ -458,5 +463,14 @@ export default {
 }
 .table-operator button {
   margin-top: 8px;
+}
+// fix移动端换行样式
+@media (max-width: 480px) {
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > th,
+  .ant-table-thead > tr > td,
+  .ant-table-tbody > tr > td {
+    white-space: normal;
+  }
 }
 </style>
