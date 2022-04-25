@@ -5,52 +5,54 @@
       :current-user="currentUser"
       :class="prefixCls"
     />
-    <select-lang :class="prefixCls" />
+    <!-- <select-lang :class="prefixCls" /> -->
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import AvatarDropdown from './AvatarDropdown'
-import SelectLang from '@/components/SelectLang'
+import { mapGetters } from "vuex";
+import AvatarDropdown from "./AvatarDropdown";
+import SelectLang from "@/components/SelectLang";
 
 export default {
-  name: 'RightContent',
+  name: "RightContent",
   components: {
     AvatarDropdown,
-    SelectLang,
+    SelectLang
   },
   props: {
     prefixCls: {
       type: String,
-      default: 'ant-pro-global-header-index-action',
+      default: "ant-pro-global-header-index-action"
     },
     isMobile: {
       type: Boolean,
-      default: () => false,
+      default: () => false
     },
     topMenu: {
       type: Boolean,
-      required: true,
+      required: true
     },
     theme: {
       type: String,
-      required: true,
-    },
-  },
-  data () {
-    return {
-      showMenu: true,
+      required: true
     }
   },
-  computed: {
-    ...mapGetters(['currentUser', 'avatar']),
-    wrpCls () {
-      return {
-        'ant-pro-global-header-index-right': true,
-        [`ant-pro-global-header-index-${(this.isMobile || !this.topMenu) ? 'light' : this.theme}`]: true,
-      }
-    },
+  data() {
+    return {
+      showMenu: true
+    };
   },
-}
+  computed: {
+    ...mapGetters(["currentUser", "avatar"]),
+    wrpCls() {
+      return {
+        "ant-pro-global-header-index-right": true,
+        [`ant-pro-global-header-index-${
+          this.isMobile || !this.topMenu ? "light" : this.theme
+        }`]: true
+      };
+    }
+  }
+};
 </script>
