@@ -36,7 +36,6 @@ const user = {
     Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          console.log('res:', response)
           const { token } = response
           storage.set(ACCESS_TOKEN, token)
           commit('SET_TOKEN', token)
@@ -86,6 +85,7 @@ const user = {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         storage.remove(ACCESS_TOKEN)
+        resolve();
       })
     },
 

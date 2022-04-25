@@ -39,6 +39,30 @@ export const asyncRouterMap = [
         component: () => import('@/views/dashboard/Welcome'),
         meta: { title: 'menu.dashboard.welcome', keepAlive: true, icon: 'dashboard', permission: ['dashboard'] },
       },
+      // 用户信息管理
+      {
+        path: '/user',
+        name: 'user',
+        component: RouteView,
+        redirect: '/user/reset',
+        meta: { title: '用户管理', keepAlive: true, icon: 'setting', permission: ['user'] },
+        children: [
+          {
+            path: '/user/table',
+            name: 'UserTable',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/manage/UserTable'),
+            meta: { title: '用户列表', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: '/user/reset',
+            name: 'resetPassword',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/manage/ResetPassword'),
+            meta: { title: '重置密码', keepAlive: true, permission: ['user'] }
+          }
+        ]
+      },
       // list
       {
         path: '/list',
@@ -56,6 +80,7 @@ export const asyncRouterMap = [
           }
         ]
       },
+
       // form
       // {
       //   path: '/form',

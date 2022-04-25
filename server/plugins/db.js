@@ -109,7 +109,7 @@ module.exports = {
   },
 
   /**
- * 插入单条记录
+ * 更新单条记录
  */
   updateOneById: (tableName, setObj, query) => {
     let values = [];

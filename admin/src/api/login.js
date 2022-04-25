@@ -27,3 +27,14 @@ export function getInfo() {
     },
   })
 }
+
+export function resetPassword(data) {
+  return request({
+    url: '/admin/user/reset',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    data: data
+  })
+}

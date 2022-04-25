@@ -16,9 +16,9 @@ module.exports = app => {
   router.get('/captcha/get', getCaptcha);
   router.get('/captcha/check', checkCaptcha);
   router.post('/user/login', doLogin);
-  router.post('/user/register', doRegister);
+  router.post('/user/register', authMiddleware(), doRegister);
   router.get('/user/info', authMiddleware(), getInfo);
-  router.post('/user/reset', resetPassword);
+  router.post('/user/reset', authMiddleware(), resetPassword);
 
   router.get('/customer/list', authMiddleware(), getCustomerList);
   router.post('/customer/add', authMiddleware(), addCustomer);

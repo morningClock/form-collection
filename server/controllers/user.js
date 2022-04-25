@@ -103,7 +103,8 @@ async function getInfo(req, res, next) {
     name: '管理员',
     permissions: [
       'dashboard',
-      'table'
+      'table',
+      'user'
     ]
   }
   res.send({
@@ -136,16 +137,39 @@ async function doRegister(req, res, next) {
     modified_time: time,
   }
   let user = await db.insertOne('fc_user', newUser)
-  console.log('新增用户：', user)
   return res.send({
     success: true,
     message: newUser.username + ' 注册成功'
   })
 }
 
-
+/**
+ * 重置密码
+ * @param {*}  token
+ * @param {*}  oldPassword
+ * @param {*}  newPassword
+ */
 async function resetPassword(req, res, next) {
-  res.send('profile success')
+  const { id } = req.user;
+  const { oldPassword, newPassword } = req.body;
+  const user = await db.findOne(`select * from fc_user where id = ? and password = ?`, [id, md5(oldPassword + keys.secret)])
+  if (!user) {
+    return res.status(441).send({
+      code: -1,
+      message: '密码错误'
+    })
+  }
+  try {
+    db.updateOneById("fc_user", { password: md5(newPassword + keys.secret) }, { id })
+    res.status(200).send({
+      code: 0,
+      message: '修改成功',
+      refresh: true
+    })
+  } catch (e) {
+    console.error(e);
+    res.status(500).send('服务发生错误')
+  }
 }
 
 

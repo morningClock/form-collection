@@ -18,7 +18,7 @@
         <a-input
           size="large"
           type="text"
-          placeholder="账户: admin"
+          placeholder="账户"
           v-decorator="[
             'username',
             {
@@ -41,7 +41,7 @@
       <a-form-item>
         <a-input-password
           size="large"
-          placeholder="请输入密码"
+          placeholder="密码"
           v-decorator="[
             'password',
             {
@@ -88,6 +88,7 @@
 <script>
 import { mapActions } from "vuex";
 import { getSmsCaptcha } from "@/api/auth/login";
+import md5 from "md5";
 
 export default {
   name: "Login",
@@ -142,12 +143,11 @@ export default {
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log("login form", values);
           const loginParams = { ...values };
           delete loginParams.username;
           loginParams[!state.loginType ? "email" : "username"] =
             values.username;
-          loginParams.password = values.password; // md5(values.password)
+          loginParams.password = md5(values.password); // md5(values.password)
           Login(loginParams)
             .then(res => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
