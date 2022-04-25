@@ -45,7 +45,10 @@
           v-decorator="[
             'password',
             {
-              rules: [{ required: true, message: '请输入密码' }],
+              rules: [
+                { required: true, message: '请输入密码' },
+                { min: 6, message: '密码最少输入6位数' }
+              ],
               validateTrigger: 'blur'
             }
           ]"

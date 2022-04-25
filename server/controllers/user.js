@@ -123,7 +123,7 @@ async function doRegister(req, res, next) {
   const body = req.body
   const isExist = await db.findOne(`select * from fc_user where username = ?`, [req.body.username])
   if (isExist) {
-    return res.status(441).send({
+    return res.status(451).send({
       success: false,
       message: '用户已存在'
     })
@@ -172,6 +172,39 @@ async function resetPassword(req, res, next) {
   }
 }
 
+/**
+ * 获取用户列表
+ * @param {*} token
+ */
+async function getUserList(req, res, next) {
+  let query = req.query;
+  const pageNo = parseInt(query.pageNo);
+  const pageSize = parseInt(query.pageSize);
+  try {
+    const data = await db.find("SELECT id, username FROM fc_user ORDER BY id LIMIT ?,?", [(pageNo - 1) * pageSize, pageSize])
+    const totalQuery = await db.find("SELECT count(*) AS total FROM fc_user")
+    const totalCount = totalQuery[0].total;
+    const totalPage = Math.ceil(totalCount / pageSize);
+    res.status(200).send({
+      code: 0,
+      message: '请求成功',
+      result: {
+        pageNo,
+        pageSize,
+        data,
+        totalCount,
+        totalPage
+      }
+    })
+  } catch (e) {
+    res.status(500).send({
+      code: 400,
+      message: '请求失败'
+    })
+  }
+
+}
+
 
 module.exports = {
   getCaptcha,
@@ -179,5 +212,6 @@ module.exports = {
   doLogin,
   doRegister,
   getInfo,
+  getUserList,
   resetPassword
 }

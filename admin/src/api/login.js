@@ -38,3 +38,11 @@ export function resetPassword(data) {
     data: data
   })
 }
+
+export function getUserList(parameter) {
+  return request({
+    url: '/admin/user/list',
+    method: 'get',
+    params: parameter
+  })
+}

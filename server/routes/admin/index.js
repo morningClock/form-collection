@@ -1,7 +1,7 @@
 const express = require('express')
 const upload = require('../../middleware/upload')
 // controller
-const { getInfo, getCaptcha, checkCaptcha, doLogin, doRegister, resetPassword } = require('../../controllers/user')
+const { getUserList, getInfo, getCaptcha, checkCaptcha, doLogin, doRegister, resetPassword } = require('../../controllers/user')
 const { downloadExcel, updateBatchCustomerStatus, deleteBatchCustomer, addCustomer, getCustomerList, updateCustomer, deleteCustomer, uploadFile } = require('../../controllers/form')
 
 const authMiddleware = require('../../middleware/auth')
@@ -19,6 +19,7 @@ module.exports = app => {
   router.post('/user/register', authMiddleware(), doRegister);
   router.get('/user/info', authMiddleware(), getInfo);
   router.post('/user/reset', authMiddleware(), resetPassword);
+  router.get('/user/list', authMiddleware(), getUserList);
 
   router.get('/customer/list', authMiddleware(), getCustomerList);
   router.post('/customer/add', authMiddleware(), addCustomer);
