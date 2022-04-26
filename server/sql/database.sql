@@ -26,6 +26,7 @@ CREATE TABLE `fc_customer` (
   `wx_avatar` varchar(255) DEFAULT NULL COMMENT '微信头像',
   `name` varchar(20) DEFAULT NULL COMMENT '客户姓名',
   `phone` varchar(13) DEFAULT NULL COMMENT '客户电话',
+  `address` varchar(255) DEFAULT NULL COMMENT '配送地址',
   `id_card_number` varchar(20) DEFAULT NULL COMMENT '身份证号码',
   `id_card_img_front` varchar(255) DEFAULT NULL COMMENT '身份证正面图片',
   `id_card_img_back` varchar(255) DEFAULT NULL COMMENT '身份证背面图片',
@@ -38,7 +39,22 @@ CREATE TABLE `fc_customer` (
 
 /*Data for the table `fc_customer` */
 
-insert  into `fc_customer`(`id`,`wx_name`,`wx_avatar`,`name`,`phone`,`id_card_number`,`id_card_img_front`,`id_card_img_back`,`status`,`remark`,`create_time`,`modified_time`) values ('iQVaVxKzymZg3r9dNMuIc','helloworld',NULL,'广州仓库','13232130933','4452231996142360917','/uploads/jkym8ylWfqBYGOzhZEZ5e.png','/uploads/TXl2YKv7lgcbwXUFACxOj.png',1,'','2022-04-23 22:08:54','2022-04-24 19:34:25'),('S41O2sikndsdO8RwjWdqN','1231231',NULL,'哈哈','13232130933','445333199610260917','/uploads/f4XH5W37a1Y0FBtUckay9.png','/uploads/UzUqdHY3joGgcxmv_Q2-X.jpg',1,'','2022-04-23 01:19:40','2022-04-24 23:25:52'),('sVVnPLTbLuFbRXSTvm3Nw','123123',NULL,'123123','123123','123123','/uploads/NQ113Rg11WhTaCkl5GI_W.jpg','/uploads/Q_GtjoLGPa52du7QWxWbw.jpg',1,'','2022-04-23 01:23:55','2022-04-24 19:35:02');
+insert  into `fc_customer`(`id`,`wx_name`,`wx_avatar`,`name`,`phone`,`address`,`id_card_number`,`id_card_img_front`,`id_card_img_back`,`status`,`remark`,`create_time`,`modified_time`) values ('iQVaVxKzymZg3r9dNMuIc','helloworld',NULL,'广州仓库','13232130933','广东省云浮市云城区城市花园美景苑四栋二单元1004','444444444444444444','/uploads/jkym8ylWfqBYGOzhZEZ5e.png','/uploads/TXl2YKv7lgcbwXUFACxOj.png',1,'hahahahah-helloword','2022-04-23 22:08:54','2022-04-25 21:20:03'),('mKBf62jw_SAkueABQBN0v','嘿嘿',NULL,'你好','13232130933','你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好','445323111110260917','/uploads/5ce54fedf09a54c4a6ace08a63f6c0bc.jpg','/uploads/b1eb7cbf95645f6b570ad5ddca624e03.png',1,'123123123','2022-04-25 21:21:04','2022-04-26 22:22:22'),('S41O2sikndsdO8RwjWdqN','1231231',NULL,'哈哈','13232130933',NULL,'445333199610260917','/uploads/b75d4b6989e5401fd283bf508eb78d64.jpg','/uploads/UzUqdHY3joGgcxmv_Q2-X.jpg',1,'','2022-04-23 01:19:40','2022-04-25 19:57:24'),('sVVnPLTbLuFbRXSTvm3Nw','123123',NULL,'123123','123123',NULL,'123123','/uploads/NQ113Rg11WhTaCkl5GI_W.jpg','/uploads/Q_GtjoLGPa52du7QWxWbw.jpg',1,'','2022-04-23 01:23:55','2022-04-24 19:35:02');
+
+/*Table structure for table `fc_system_config` */
+
+DROP TABLE IF EXISTS `fc_system_config`;
+
+CREATE TABLE `fc_system_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `web_title` varchar(255) DEFAULT NULL,
+  `admin_title` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `fc_system_config` */
+
+insert  into `fc_system_config`(`id`,`web_title`,`admin_title`) values (1,'表单填报系统','客户信息管理系统');
 
 /*Table structure for table `fc_user` */
 

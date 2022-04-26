@@ -26,6 +26,7 @@ CREATE TABLE `fc_customer` (
   `wx_avatar` varchar(255) DEFAULT NULL COMMENT '微信头像',
   `name` varchar(20) DEFAULT NULL COMMENT '客户姓名',
   `phone` varchar(13) DEFAULT NULL COMMENT '客户电话',
+  `address` varchar(255) DEFAULT NULL COMMENT '配送地址',
   `id_card_number` varchar(20) DEFAULT NULL COMMENT '身份证号码',
   `id_card_img_front` varchar(255) DEFAULT NULL COMMENT '身份证正面图片',
   `id_card_img_back` varchar(255) DEFAULT NULL COMMENT '身份证背面图片',
@@ -35,6 +36,17 @@ CREATE TABLE `fc_customer` (
   `modified_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Table structure for table `fc_system_config` */
+
+DROP TABLE IF EXISTS `fc_system_config`;
+
+CREATE TABLE `fc_system_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `web_title` varchar(255) DEFAULT NULL,
+  `admin_title` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `fc_user` */
 
