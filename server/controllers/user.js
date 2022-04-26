@@ -109,7 +109,8 @@ async function getInfo(req, res, next) {
     permissions: [
       'dashboard',
       'table',
-      'user'
+      'user',
+      'setting'
     ]
   }
   res.send({

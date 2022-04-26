@@ -3,6 +3,7 @@ const upload = require('../../middleware/upload')
 // controller
 const { getUserList, getInfo, getCaptcha, checkCaptcha, doLogin, doRegister, resetPassword } = require('../../controllers/user')
 const { downloadExcel, updateBatchCustomerStatus, deleteBatchCustomer, addCustomer, getCustomerList, updateCustomer, deleteCustomer, uploadFile } = require('../../controllers/form')
+const { getSystemTitle, setSystemTitle } = require('../../controllers/system')
 
 const authMiddleware = require('../../middleware/auth')
 
@@ -12,6 +13,8 @@ const router = express.Router({
 })
 
 module.exports = app => {
+  router.get('/system/title', getSystemTitle);
+  router.post('/system/set', authMiddleware(), setSystemTitle);
 
   router.get('/captcha/get', getCaptcha);
   router.get('/captcha/check', checkCaptcha);
