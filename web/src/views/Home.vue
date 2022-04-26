@@ -1,7 +1,7 @@
 <template>
   <div class="home-wrapper">
     <div class="home">
-      <h1>表单填报系统</h1>
+      <h1>{{ title }}</h1>
       <img class="home-img" src="../assets/background.png" alt="" />
       <router-link :to="{ path: 'form' }">
         <van-button
@@ -19,7 +19,16 @@
 export default {
   name: "FormHome",
   data() {
-    return {};
+    return {
+      title: localStorage.getItem("title"),
+    };
+  },
+  created() {
+    this.$http.get("/system/title").then((res) => {
+      this.title = res.result.title;
+      localStorage.setItem("title", res.result.title);
+      document.title = res.result.title;
+    });
   },
 };
 </script>
@@ -33,6 +42,7 @@ export default {
 .home h1 {
   margin-top: 30px;
   margin-bottom: 10px;
+  height: 31px;
   font-size: 24px;
 }
 .home-img {
