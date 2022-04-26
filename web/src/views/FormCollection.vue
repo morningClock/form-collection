@@ -61,7 +61,6 @@
               :before-read="beforeRead"
               :after-read="(file) => afterRead(file, 'id_card_img_front')"
               max-count="1"
-              :max-size="2 * 1024 * 1024"
               @oversize="onOversize"
               :delete="removeImg"
             />
@@ -75,7 +74,6 @@
               :before-read="beforeRead"
               :after-read="(file) => afterRead(file, 'id_card_img_back')"
               max-count="1"
-              :max-size="2 * 1024 * 1024"
               @oversize="onOversize"
               :delete="removeImg"
             />
@@ -102,11 +100,12 @@
 
 <script>
 import { isName, isIDCard, isPhone } from "@/utils/validate";
+import { compressImage } from "@/utils/upload";
 export default {
   name: "FormCollection",
   data() {
     return {
-      imgHost: "http://localhost:3000",
+      imgHost: process.env.VUE_APP_API_BASE_URL,
       formData: this.createForm(),
       idCardImgFrontPreview: [],
       idCardImgBackPreview: [],
@@ -162,11 +161,14 @@ export default {
       return true;
     },
     async afterRead(file, dataName) {
+      // 压缩图片再上传
+      let compressFile = await compressImage(file, 1920);
+
       file.content = "";
       file.status = "uploading";
       file.message = "上传中";
       try {
-        let imgURL = await this.uploadImage(file.file);
+        let imgURL = await this.uploadImage(compressFile);
         this.formData[dataName] = imgURL;
         file.content = this.imgHost + imgURL;
         file.status = "";

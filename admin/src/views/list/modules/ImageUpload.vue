@@ -5,6 +5,7 @@
       :action="url"
       list-type="picture-card"
       :file-list="fileList"
+      :before-upload="beforeUpload"
       @preview="handlePreview"
       @change="handleChange"
     >
@@ -22,6 +23,32 @@
 </template>
 <script>
 import config from "@/views/list/config";
+// 压缩图片为指定的尺寸
+function compressImage(imgFile, compressWidth) {
+  return new Promise(async resolve => {
+    let image = new Image();
+    image.src = await getBase64(imgFile); //base64
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      const ratio = image.height / image.width; //原图比例
+      if (image.width < compressWidth) {
+        // 原图宽度小于设定宽度，不增加宽度
+        compressWidth = image.width;
+      }
+      const imageWidth = compressWidth;
+      const imageHeight = compressWidth * ratio;
+      canvas.width = imageWidth;
+      canvas.height = imageHeight;
+      context.drawImage(image, 0, 0, imageWidth, imageHeight);
+      // 压缩后的base64
+      const data = canvas.toDataURL("image/jpeg");
+      let compressfile = base64ToFile(data, imgFile.name);
+      compressfile.uid = imgFile.uid;
+      resolve(compressfile);
+    };
+  });
+}
 function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -29,6 +56,17 @@ function getBase64(file) {
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
+}
+function base64ToFile(dataURL, filename) {
+  const arr = dataURL.split(","),
+    mime = arr[0].match(/:(.*?);/)[1], //mime类型 image/png
+    bstr = atob(arr[1]); //base64 解码
+  let n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
 }
 export default {
   name: "ImageUpload",
@@ -78,6 +116,12 @@ export default {
     },
     handleChange(info) {
       this.fileList = info.fileList;
+    },
+    beforeUpload(file, fileList) {
+      return new Promise(async resolve => {
+        let compressFile = await compressImage(file, 1920);
+        resolve(compressFile);
+      });
     }
   },
   watch: {
