@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>欢迎使用信息管理平台</h2>
+    <h2>欢迎使用{{ this.$store.getters.title }}</h2>
   </div>
 </template>
 

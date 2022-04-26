@@ -22,3 +22,5 @@ export const NAV_THEME = {
   LIGHT: 'light',
   DARK: 'dark',
 }
+
+export const APP_TITLE = "app_title"

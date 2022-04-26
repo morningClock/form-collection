@@ -5,7 +5,7 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo" />
-            <span class="title">信息管理平台</span>
+            <span class="title">{{ siteTitle }}</span>
           </a>
         </div>
       </div>
@@ -27,11 +27,20 @@
 </template>
 
 <script>
+import storage from "store";
+import { APP_TITLE } from "@/store/mutation-types";
 import { deviceMixin } from "@/store/device-mixin";
 
 export default {
   name: "UserLayout",
   mixins: [deviceMixin],
+  computed: {
+    siteTitle() {
+      return (
+        storage.get(APP_TITLE) || this.$store.getters.title || "信息管理系统"
+      );
+    }
+  },
   mounted() {
     document.body.classList.add("userLayout");
   },

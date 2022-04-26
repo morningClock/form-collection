@@ -13,6 +13,7 @@ import {
   TOGGLE_MULTI_TAB,
   // i18n
   APP_LANGUAGE,
+  APP_TITLE
 } from '@/store/mutation-types'
 import { loadLanguageAsync } from '@/locales'
 
@@ -31,6 +32,7 @@ const app = {
     multiTab: true,
     lang: 'en-US',
     _antLocale: {},
+    title: ''
   },
   mutations: {
     [SIDEBAR_TYPE]: (state, type) => {
@@ -81,9 +83,13 @@ const app = {
       storage.set(TOGGLE_MULTI_TAB, bool)
       state.multiTab = bool
     },
+    [APP_TITLE]: (state, title) => {
+      state.title = title
+      storage.set(APP_TITLE, title)
+    },
   },
   actions: {
-    setLang ({ commit }, lang) {
+    setLang({ commit }, lang) {
       return new Promise((resolve, reject) => {
         commit(APP_LANGUAGE, lang)
         loadLanguageAsync(lang).then(() => {
@@ -91,6 +97,12 @@ const app = {
         }).catch((e) => {
           reject(e)
         })
+      })
+    },
+    setTitle({ commit }, title) {
+      return new Promise((resolve) => {
+        commit(APP_TITLE, title)
+        resolve();
       })
     },
   },

@@ -17,7 +17,7 @@
     }"
   >
     <template v-slot:menuHeaderRender>
-      <div>
+      <div class="logo">
         <img src="~@/assets/logo.svg" :alt="siteTitle" />
         <h1>{{ siteTitle }}</h1>
       </div>
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import storage from "store";
+import { APP_TITLE } from "@/store/mutation-types";
 import { mapState } from "vuex";
 import { RightContent } from "@/components";
 import {
@@ -79,8 +81,11 @@ export default {
   name: "BasicLayout",
   mixins: [baseMixin], // this[xxx] store value mixin, see this file
   data() {
-    this.siteTitle = defaultSettings.title;
     return {
+      siteTitle:
+        storage.get(APP_TITLE) ||
+        this.$store.getters.title ||
+        defaultSettings.title,
       // base
       menus: [],
       // 侧栏收起状态
@@ -194,4 +199,10 @@ export default {
 
 <style lang="less">
 @import "./BasicLayout.less";
+.logo {
+  h1 {
+    max-width: 160px;
+    height: 64px;
+  }
+}
 </style>

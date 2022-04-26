@@ -80,7 +80,23 @@ export const asyncRouterMap = [
           }
         ]
       },
-
+      // 系统设置
+      {
+        path: '/system',
+        name: 'system',
+        component: RouteView,
+        redirect: '/system/title',
+        meta: { title: '系统设置', keepAlive: true, icon: 'setting', permission: ['user'] },
+        children: [
+          {
+            path: '/system/title',
+            name: 'SetTitle',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/system/SetTitle'),
+            meta: { title: '标题设置', keepAlive: true, permission: ['setting'] }
+          }
+        ]
+      },
       // form
       // {
       //   path: '/form',

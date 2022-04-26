@@ -7,19 +7,26 @@
 </template>
 
 <script>
-import { domTitle, setDocumentTitle } from '@/utils/domUtil'
-import { i18nRender } from '@/locales'
+import { getSystemTitle } from "@/api/system";
+import { domTitle, setDocumentTitle } from "@/utils/domUtil";
+import { i18nRender } from "@/locales";
 
 export default {
-  name: 'App',
+  name: "App",
   computed: {
-    locale () {
+    locale() {
       // sync dom title
-      const { title } = this.$route.meta
-      title && (setDocumentTitle(`${i18nRender(title)} - ${domTitle}`))
+      const { title } = this.$route.meta;
+      title && setDocumentTitle(`${i18nRender(title)} - ${domTitle}`);
 
-      return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale
-    },
+      return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale;
+    }
   },
-}
+  mounted() {
+    getSystemTitle().then(res => {
+      const adminTitle = res.result.data.admin_title;
+      this.$store.dispatch("setTitle", adminTitle);
+    });
+  }
+};
 </script>
