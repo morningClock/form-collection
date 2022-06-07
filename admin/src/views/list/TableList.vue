@@ -439,7 +439,7 @@ export default {
       console.log("export Excel");
       downloadCustomerExcel().then(res => {
         let excelURL = baseURL + res.data.download;
-        download(excelURL);
+        download(excelURL, "客户信息表");
       });
     }
   }
